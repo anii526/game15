@@ -1,7 +1,7 @@
-import * as PIXI from "pixi.js";
+// import * as PIXI from "pixi.js";
 import { app } from "..";
-// import { CrossyCatSceneManager } from "./scenes/CrossyCatSceneManager";
-// import { CrossyCatScenes } from "./scenes/CrossyCatScenes";
+import { Game15SceneManager } from "./scenes/Game15SceneManager";
+import { Game15Scenes } from "./scenes/Game15Scenes";
 
 export class World extends PIXI.Sprite {
     constructor() {
@@ -12,17 +12,12 @@ export class World extends PIXI.Sprite {
         this.createSceneManager();
     }
     public createSceneManager() {
-        // const crossyCatSceneManager = new CrossyCatSceneManager(this);
-        // crossyCatSceneManager.init();
-        // crossyCatSceneManager.setCurrentScene(CrossyCatScenes.GAME);
+        const scenesManager = new Game15SceneManager(this);
+        scenesManager.init();
+        scenesManager.setCurrentScene(Game15Scenes.GAME);
 
-        // //
-        // app.pixi.app.ticker.add(delta => {
-        //     crossyCatSceneManager.update(delta);
-        // });
-
-        const bg1 = new PIXI.Sprite(app.getTexture("bg"));
-        bg1.scale.set(2, 2);
-        this.addChild(bg1);
+        app.pixi.app.ticker.add(delta => {
+            scenesManager.update(delta);
+        });
     }
 }

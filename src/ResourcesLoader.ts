@@ -1,4 +1,4 @@
-import * as PIXI from "pixi.js";
+// import * as PIXI from "pixi.js";
 // import * as WebFont from 'webfontloader';
 // import { PreloaderManager } from './utils/preloader/preloader-manager';
 // import { mainSlot } from 'index';
