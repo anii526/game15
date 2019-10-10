@@ -1,6 +1,6 @@
 import { Graphics, Sprite } from "pixi.js";
 
-export class Dice extends Sprite {
+export class Figure extends Sprite {
     public back: Graphics;
     public txt: PIXI.Text;
     public get id(): number {
@@ -35,5 +35,10 @@ export class Dice extends Sprite {
 
         this.back.interactive = true;
         this.back.buttonMode = true;
+    }
+    public deadMe(): void {
+        while (this.children.length) {
+            this.removeChildAt(0);
+        }
     }
 }
