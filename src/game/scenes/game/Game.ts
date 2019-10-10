@@ -5,10 +5,17 @@ import { Dice } from "./Dice";
 
 export class Game extends Scene {
     public maps: Dice[][];
+    public countX: number = 0;
+    public countY: number = 0;
     public init() {
         const dice = new Dice();
-        dice.init();
         this.addChild(dice);
+
+        for (let i = 0; i < this.countX; i++) {
+            for (let j = 0; j < this.countY; j++) {
+                console.log();
+            }
+        }
     }
     public update(delta: number) {
         //

@@ -13,6 +13,11 @@
         "constructor": "never"
       }
     ],
+    "variable-name": [
+      true,
+      "check-format",
+      "allow-leading-underscore"
+    ],
     "no-console": [false],
     "object-literal-sort-keys": false,
     "no-debugger": false,
