@@ -3,6 +3,8 @@ import { Graphics, Sprite } from "pixi.js";
 export class Figure extends Sprite {
     public back: Graphics;
     public txt: PIXI.Text;
+    public width: number;
+    public height: number;
     public get id(): number {
         return this._id;
     }
@@ -13,6 +15,10 @@ export class Figure extends Sprite {
     private _id: number;
     constructor() {
         super();
+
+        this.width = 100;
+        this.height = 100;
+
         this.back = new Graphics();
         this.back.beginFill(0xff0f0f);
         this.back.drawRect(0, 0, 100, 100);
@@ -32,13 +38,5 @@ export class Figure extends Sprite {
         this.txt.position.x = 50;
         this.txt.position.y = 50;
         this.addChild(this.txt);
-
-        this.back.interactive = true;
-        this.back.buttonMode = true;
-    }
-    public deadMe(): void {
-        while (this.children.length) {
-            this.removeChildAt(0);
-        }
     }
 }

@@ -19,11 +19,11 @@ export class Game extends Scene {
         // здесь можно схимичить красивенький интерфейс. Поставить стол, стул пару бокалов... зажечь свечи...)))
         this.addChild((this.holder = new Sprite()));
         this.holder.x = this.holder.y = 20;
+        // this.holder.interactive = true;
+        // this.holder.interactiveChildren = true;
         // service variables and listeners
         // this.figures = [];
         this.figures = [[], [], [], []];
-        // stage.addEventListener(KeyboardEvent.KEY_DOWN, keyController);
-        // holder.addEventListener(MouseEvent.CLICK, mouseController);
         // потопали играться.
         this.newGame();
     }
@@ -45,12 +45,20 @@ export class Game extends Scene {
     }
     private newGame(): void {
         // очистка контейнера и обновление статуса игры
+        // tslint:disable-next-line:prefer-for-of
+        for (let j = 0; j < this.figures.length; j++) {
+            for (let i = 0; i < this.figures[0].length; i++) {
+                const figure = this.figures[j][i];
+                figure.off("pointerup", this.mouseController);
+            }
+        }
         while (this.holder.children.length) {
             this.holder.removeChildAt(0);
         }
         this.gameReadyState = true;
         // **Создание новых игровых настроек
-        // this.figures.length = 0;
+        this.figures.length = 0;
+        this.figures = [[], [], [], []];
         // временный массив с индексами фигурок
         const arr: number[] = [];
         for (let i: number = 0; i < 15; i++) {
@@ -72,19 +80,23 @@ export class Game extends Scene {
         let fig: Figure;
         for (let i = 0; i < 15; i++) {
             x0 = i % 4;
-            y0 = Math.round(i / 4);
+            y0 = Math.trunc(i / 4);
             this.holder.addChild((fig = new Figure()));
             fig.x = 100 * x0;
             fig.y = 100 * y0;
             fig.id = arr[i];
             x0 ? this.figures[y0].push(fig) : this.figures.push([fig]);
+
+            fig.on("pointerup", this.mouseController);
+            fig.interactive = true;
         }
         // Установка пустой ячейки
         this.figures[3].push(null);
-        this.empty = new Point(14 % 4, Math.round(14 / 4));
+        this.empty = new Point(15 % 4, Math.trunc(15 / 4));
+        console.log(this.empty);
     }
     private shuffle(a: number, b: number): number {
-        return Math.round(Math.random() * 16 - 8);
+        return Math.trunc(Math.random() * 16 - 8);
     }
     private checkChaos(arg: number[]): boolean {
         let first: number;
@@ -96,5 +108,98 @@ export class Game extends Scene {
             }
         }
         return Boolean(chaos % 2);
+    }
+    private keyController(e: KeyboardEvent): void {
+        if (!this.holder.children.length) {
+            return;
+        }
+        let fig: Figure;
+        const oldEmpty: Point = this.empty.clone();
+        switch (e.keyCode) {
+            case 37: // стрелка влево
+                if (this.empty.x === 3 || !this.gameReadyState) {
+                    return;
+                }
+                this.empty.x++;
+                break;
+            case 38: // стрелка вверх
+                if (this.empty.y === 3 || !this.gameReadyState) {
+                    return;
+                }
+                this.empty.y++;
+                break;
+            case 39: // стрелка вправо
+                if (!this.empty.x || !this.gameReadyState) {
+                    return;
+                }
+                this.empty.x--;
+                break;
+            case 40: // стрелка вниз
+                if (!this.empty.y || !this.gameReadyState) {
+                    return;
+                }
+                this.empty.y--;
+                break;
+            case 27: // escape
+                this.newGame();
+                return;
+                break;
+            default:
+                return;
+        }
+        fig = this.figures[this.empty.y][this.empty.x];
+        this.figures[this.empty.y][this.empty.x] = null;
+        this.figures[oldEmpty.y][oldEmpty.x] = fig;
+        // TweenMax.to(fig, 0.3, {
+        //     x: oldEmpty.x * fig.width,
+        //     y: oldEmpty.y * fig.height,
+        //     ease: Quart.easeIn
+        // });
+        this.checkGameStatus();
+    }
+    private mouseController = (e: any) => {
+        console.log(e.target);
+        if (!this.gameReadyState) {
+            return;
+        }
+        if (
+            Math.abs(this.empty.x - e.target.x / e.target.width) +
+                Math.abs(this.empty.y - e.target.y / e.target.height) !==
+            1
+        ) {
+            return;
+        }
+        const x0: number = this.empty.x * e.target.width;
+        const y0: number = this.empty.y * e.target.height;
+        this.figures[this.empty.y][this.empty.x] = e.target;
+        this.empty.y = e.target.y / e.target.height;
+        this.empty.x = e.target.x / e.target.width;
+        this.figures[this.empty.y][this.empty.x] = null;
+        // // TweenMax.to(e.target, .3, { x:x0, y:y0, ease:Quart.easeIn } );
+        e.target.x = x0;
+        e.target.y = y0;
+        this.checkGameStatus();
+    };
+    private checkGameStatus(): void {
+        let x0: number;
+        let y0: number;
+        // const fig:Clip;
+        for (let i: number = 0; i < 15; i++) {
+            (x0 = i % 4), (y0 = Math.trunc(i / 4));
+            if (
+                this.figures[y0][x0] === null ||
+                this.figures[y0][x0].id !== i + 1
+            ) {
+                return;
+            }
+        }
+        // game over
+        this.gameReadyState = false;
+        // Здесь можно слепить свою победу...
+        // var mc:victory = new victory();
+        // mc.x = (holder.width - mc.width) / 2;
+        // mc.y = (holder.height - mc.height) / 2;
+        // holder.addChild(mc);
+        alert("Победа!!!");
     }
 }
