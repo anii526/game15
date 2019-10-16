@@ -50,6 +50,7 @@ export class Game extends Scene {
             for (let i = 0; i < this.figures[0].length; i++) {
                 const figure = this.figures[j][i];
                 figure.off("pointerup", this.mouseController);
+                figure.deadMe();
             }
         }
         while (this.holder.children.length) {

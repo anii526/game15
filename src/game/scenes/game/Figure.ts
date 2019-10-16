@@ -39,4 +39,9 @@ export class Figure extends Sprite {
         this.txt.position.y = 50;
         this.addChild(this.txt);
     }
+    public deadMe(): void {
+        while (this.children.length) {
+            this.removeChildAt(0);
+        }
+    }
 }
