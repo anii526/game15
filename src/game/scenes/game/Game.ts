@@ -3,7 +3,7 @@ import { Scene } from "../../Scene";
 import { Figure } from "./Figure";
 const keyboardKey = require("keyboard-key");
 // import { Wall } from "./game/items/Wall";
-// const TWEEN = require("tween.js");
+const TWEEN = require("tween.js");
 
 export class Game extends Scene {
     // контейнер костяшек
@@ -159,13 +159,10 @@ export class Game extends Scene {
         fig = this.figures[this.empty.y][this.empty.x];
         this.figures[this.empty.y][this.empty.x] = null;
         this.figures[oldEmpty.y][oldEmpty.x] = fig;
-        // TweenMax.to(fig, 0.3, {
-        //     x: oldEmpty.x * fig.width,
-        //     y: oldEmpty.y * fig.height,
-        //     ease: Quart.easeIn
-        // });
-        fig.x = oldEmpty.x * fig.width;
-        fig.y = oldEmpty.y * fig.height;
+        new TWEEN.Tween(fig)
+            .to({ x: oldEmpty.x * fig.width, y: oldEmpty.y * fig.height }, 300)
+            .easing(TWEEN.Easing.Quadratic.In)
+            .start();
         this.checkGameStatus();
     };
     private mouseController = (e: any) => {
@@ -187,8 +184,12 @@ export class Game extends Scene {
         this.empty.x = e.target.x / e.target.width;
         this.figures[this.empty.y][this.empty.x] = null;
         // // TweenMax.to(e.target, .3, { x:x0, y:y0, ease:Quart.easeIn } );
-        e.target.x = x0;
-        e.target.y = y0;
+        // e.target.x = x0;
+        // e.target.y = y0;
+        new TWEEN.Tween(e.target)
+            .to({ x: x0, y: y0 }, 300)
+            .easing(TWEEN.Easing.Quadratic.In)
+            .start();
         this.checkGameStatus();
     };
     private checkGameStatus(): void {
