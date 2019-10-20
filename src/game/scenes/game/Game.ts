@@ -1,6 +1,7 @@
 import { Point, Sprite } from "pixi.js";
 import { Scene } from "../../Scene";
 import { Figure } from "./Figure";
+const keyboardKey = require("keyboard-key");
 // import { Wall } from "./game/items/Wall";
 // const TWEEN = require("tween.js");
 
@@ -8,7 +9,7 @@ export class Game extends Scene {
     // контейнер костяшек
     private holder: Sprite;
     // массив с текущим набором костей
-    private figures: Figure[][];
+    private figures: any[][];
     // Координаты пустой ячейки на игровом поле, в виде номеров ячеек, а не пикселей.
     private empty: Point;
     // Флаг состояния игры. Разрешает/запрещает взаимодействие пользователя с игрой (мышь и клавиатура).
@@ -26,6 +27,8 @@ export class Game extends Scene {
         this.figures = [[], [], [], []];
         // потопали играться.
         this.newGame();
+
+        document.addEventListener("keydown", this.keyController);
     }
     public init() {
         // const dice = new Figure();
@@ -49,8 +52,10 @@ export class Game extends Scene {
         for (let j = 0; j < this.figures.length; j++) {
             for (let i = 0; i < this.figures[0].length; i++) {
                 const figure = this.figures[j][i];
-                figure.off("pointerup", this.mouseController);
-                figure.deadMe();
+                if (figure) {
+                    figure.off("pointerup", this.mouseController);
+                    figure.deadMe();
+                }
             }
         }
         while (this.holder.children.length) {
@@ -86,15 +91,15 @@ export class Game extends Scene {
             fig.x = 100 * x0;
             fig.y = 100 * y0;
             fig.id = arr[i];
-            x0 ? this.figures[y0].push(fig) : this.figures.push([fig]);
+            // if()
+            this.figures[y0][x0] = fig;
 
             fig.on("pointerup", this.mouseController);
             fig.interactive = true;
         }
         // Установка пустой ячейки
-        this.figures[3].push(null);
+        this.figures[3][3] = null;
         this.empty = new Point(15 % 4, Math.trunc(15 / 4));
-        console.log(this.empty);
     }
     private shuffle(a: number, b: number): number {
         return Math.trunc(Math.random() * 16 - 8);
@@ -110,44 +115,47 @@ export class Game extends Scene {
         }
         return Boolean(chaos % 2);
     }
-    private keyController(e: KeyboardEvent): void {
+    private keyController = (e: any) => {
         if (!this.holder.children.length) {
             return;
         }
+        console.log(e);
+        const key = keyboardKey.getKey(e);
         let fig: Figure;
         const oldEmpty: Point = this.empty.clone();
-        switch (e.keyCode) {
-            case 37: // стрелка влево
+        switch (key) {
+            case "ArrowLeft": // стрелка влево
                 if (this.empty.x === 3 || !this.gameReadyState) {
                     return;
                 }
                 this.empty.x++;
                 break;
-            case 38: // стрелка вверх
+            case "ArrowUp": // стрелка вверх
                 if (this.empty.y === 3 || !this.gameReadyState) {
                     return;
                 }
                 this.empty.y++;
                 break;
-            case 39: // стрелка вправо
+            case "ArrowRight": // стрелка вправо
                 if (!this.empty.x || !this.gameReadyState) {
                     return;
                 }
                 this.empty.x--;
                 break;
-            case 40: // стрелка вниз
+            case "ArrowDown": // стрелка вниз
                 if (!this.empty.y || !this.gameReadyState) {
                     return;
                 }
                 this.empty.y--;
                 break;
-            case 27: // escape
+            case "Escape": // escape
                 this.newGame();
                 return;
                 break;
             default:
                 return;
         }
+        console.log({ x: this.figures });
         fig = this.figures[this.empty.y][this.empty.x];
         this.figures[this.empty.y][this.empty.x] = null;
         this.figures[oldEmpty.y][oldEmpty.x] = fig;
@@ -156,8 +164,10 @@ export class Game extends Scene {
         //     y: oldEmpty.y * fig.height,
         //     ease: Quart.easeIn
         // });
+        fig.x = oldEmpty.x * fig.width;
+        fig.y = oldEmpty.y * fig.height;
         this.checkGameStatus();
-    }
+    };
     private mouseController = (e: any) => {
         console.log(e.target);
         if (!this.gameReadyState) {
