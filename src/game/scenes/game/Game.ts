@@ -28,7 +28,7 @@ export class Game extends Scene {
         this.size = 4;
         this.figures = [];
         // потопали играться.
-        this.newGame(this.size);
+        this.newGame(this.randomInteger(2, 5));
 
         document.addEventListener("keydown", this.keyController);
     }
@@ -119,7 +119,6 @@ export class Game extends Scene {
         if (!this.holder.children.length) {
             return;
         }
-        console.log(e);
         const key = keyboardKey.getKey(e);
         let fig: Figure;
         const oldEmpty: Point = this.empty.clone();
