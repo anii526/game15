@@ -16,8 +16,8 @@ export class Figure extends Sprite {
     constructor() {
         super();
 
-        this.width = 100;
-        this.height = 100;
+        this.width = 105;
+        this.height = 105;
 
         this.back = new Graphics();
         this.back.beginFill(0xff0f0f);
