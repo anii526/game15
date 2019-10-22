@@ -149,7 +149,7 @@ export class Game extends Scene {
                 this.empty.y--;
                 break;
             case "Escape": // escape
-                this.newGame(this.randomInteger(2, 4));
+                this.newGame(this.randomInteger(2, 5));
                 return;
                 break;
             default:
