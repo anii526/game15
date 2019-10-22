@@ -21,7 +21,7 @@ export class Figure extends Sprite {
 
         this.back = new Graphics();
         this.back.beginFill(0xff0f0f);
-        this.back.drawRect(0, 0, 100, 100);
+        this.back.drawRoundedRect(0, 0, 100, 100, 0);
         this.back.endFill();
         this.addChild(this.back);
 

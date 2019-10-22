@@ -25,10 +25,10 @@ export class Game extends Scene {
         this.addChild((this.holder = new Sprite()));
         this.holder.x = this.holder.y = 20;
 
-        this.size = 5;
+        this.size = 4;
         this.figures = [];
         // потопали играться.
-        this.newGame();
+        this.newGame(this.size);
 
         document.addEventListener("keydown", this.keyController);
     }
@@ -38,7 +38,8 @@ export class Game extends Scene {
     public runScene(oldScene: Scene) {
         console.log("Game show");
     }
-    private newGame(): void {
+    private newGame(size: number): void {
+        this.size = size;
         // очистка контейнера и обновление статуса игры
         // tslint:disable-next-line:prefer-for-of
         for (let j = 0; j < this.figures.length; j++) {
@@ -148,7 +149,7 @@ export class Game extends Scene {
                 this.empty.y--;
                 break;
             case "Escape": // escape
-                this.newGame();
+                this.newGame(this.randomInteger(2, 4));
                 return;
                 break;
             default:
@@ -164,7 +165,6 @@ export class Game extends Scene {
         this.checkGameStatus();
     };
     private mouseController = (e: any) => {
-        console.log(e.target);
         if (!this.gameReadyState) {
             return;
         }
@@ -208,5 +208,10 @@ export class Game extends Scene {
         // mc.y = (holder.height - mc.height) / 2;
         // holder.addChild(mc);
         alert("Победа!!!");
+    }
+    private randomInteger(min: number, max: number) {
+        // случайное число от min до (max+1)
+        const rand = min + Math.random() * (max + 1 - min);
+        return Math.floor(rand);
     }
 }
