@@ -20,13 +20,14 @@ export class Figure extends Sprite {
         this.height = 105;
 
         this.back = new Graphics();
-        this.back.beginFill(0xff0f0f);
+        this.back.beginFill(0x575757);
         this.back.drawRoundedRect(0, 0, 100, 100, 0);
         this.back.endFill();
         this.addChild(this.back);
 
         const style = new PIXI.TextStyle({
             fontFamily: "Arial",
+            fill: 0xfffff0,
             fontSize: 36,
             fontWeight: "bold"
         });

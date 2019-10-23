@@ -1,4 +1,5 @@
-import { Point, Sprite } from "pixi.js";
+import { Graphics, Point, Sprite } from "pixi.js";
+import { GameData } from "../../../GameData";
 import { Scene } from "../../Scene";
 import { Figure } from "./Figure";
 const keyboardKey = require("keyboard-key");
@@ -16,19 +17,27 @@ export class Game extends Scene {
     private gameReadyState: boolean;
     private size: number;
     private maxIndex: number;
+    private backGraphic: Graphics;
     constructor() {
         super();
     }
     public init() {
-        // entry point
-        // здесь можно схимичить красивенький интерфейс. Поставить стол, стул пару бокалов... зажечь свечи...)))
+        this.backGraphic = new Graphics();
+        this.backGraphic.beginFill(0x000000);
+        this.backGraphic.drawRoundedRect(0, 0, 100, 100, 0);
+        this.backGraphic.endFill();
+        this.addChild(this.backGraphic);
+
         this.addChild((this.holder = new Sprite()));
         this.holder.x = this.holder.y = 20;
+
+        this.backGraphic.x = this.backGraphic.y = this.holder.x = this.holder.y = 20;
 
         this.size = 4;
         this.figures = [];
         // потопали играться.
         this.newGame(this.randomInteger(2, 5));
+        // this.newGame(this.randomInteger(2, 5));
 
         document.addEventListener("keydown", this.keyController);
     }
@@ -100,6 +109,37 @@ export class Game extends Scene {
             (this.maxIndex + 1) % this.size,
             Math.trunc((this.maxIndex + 1) / this.size)
         );
+
+        this.backGraphic.width = 105 * this.size + 5;
+        this.backGraphic.height = 105 * this.size + 5;
+
+        this.holder.x =
+            GameData.ASSETS_WIDTH / 2 - this.backGraphic.width / 2 + 5;
+        this.holder.y =
+            GameData.ASSETS_HEIGHT / 2 - this.backGraphic.height / 2 + 5;
+
+        // this.holder.x = 0;
+
+        this.backGraphic.position.x = this.holder.x - 5;
+        this.backGraphic.position.y = this.holder.y - 5;
+
+        const style = new PIXI.TextStyle({
+            fontFamily: "Arial",
+            fill: 0xfffff0,
+            fontSize: 40,
+            fontWeight: "bold"
+        });
+        const hod = new PIXI.Text("⇄");
+        hod.style = style;
+        hod.position.x = 100;
+        hod.position.y = 170;
+        this.addChild(hod);
+
+        const clock = new PIXI.Text("⏰");
+        clock.style = style;
+        clock.position.x = 420;
+        clock.position.y = 170;
+        this.addChild(clock);
     }
     private shuffle(a: number, b: number): number {
         return Math.trunc(Math.random() * 16 - 8);
