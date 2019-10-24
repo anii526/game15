@@ -16,7 +16,10 @@ export class ResourcesLoader {
         return new Promise((resolve, reject) => {
             const version = 1;
 
-            this.loader.add("bg", "./assets/back.png?" + version);
+            this.loader.add("back", "./assets/back.png?" + version);
+            this.loader.add("5x5", "./assets/5x5.png?" + version);
+            this.loader.add("4x4", "./assets/4x4.png?" + version);
+            this.loader.add("3x3", "./assets/3x3.png?" + version);
 
             this.loader.on("progress", (loader, res) => {
                 // (loader.progress);

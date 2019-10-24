@@ -1,5 +1,6 @@
 import { Graphics, Point, Sprite } from "pixi.js";
-import { GameData } from "../../../GameData";
+import { app } from "../../..";
+// import { GameData } from "../../../GameData";
 import { Scene } from "../../Scene";
 import { Figure } from "./Figure";
 const keyboardKey = require("keyboard-key");
@@ -18,6 +19,7 @@ export class Game extends Scene {
     private size: number;
     private maxIndex: number;
     private backGraphic: Graphics;
+    private back: Sprite;
     constructor() {
         super();
     }
@@ -26,17 +28,22 @@ export class Game extends Scene {
         this.backGraphic.beginFill(0x000000);
         this.backGraphic.drawRoundedRect(0, 0, 100, 100, 0);
         this.backGraphic.endFill();
-        this.addChild(this.backGraphic);
+        // this.addChild(this.backGraphic);
+
+        this.back = new Sprite(app.getTexture("back"));
+        this.back.position.x = 55;
+        this.back.position.y = 180;
+        this.addChild(this.back);
 
         this.addChild((this.holder = new Sprite()));
         this.holder.x = this.holder.y = 20;
 
         this.backGraphic.x = this.backGraphic.y = this.holder.x = this.holder.y = 20;
 
-        this.size = 4;
+        this.size = 3;
         this.figures = [];
         // потопали играться.
-        this.newGame(this.randomInteger(2, 5));
+        this.newGame(this.size);
         // this.newGame(this.randomInteger(2, 5));
 
         document.addEventListener("keydown", this.keyController);
@@ -95,9 +102,9 @@ export class Game extends Scene {
         for (let i = 0; i < this.maxIndex + 1; i++) {
             x0 = i % this.size;
             y0 = Math.trunc(i / this.size);
-            this.holder.addChild((fig = new Figure()));
-            fig.x = 105 * x0;
-            fig.y = 105 * y0;
+            this.holder.addChild((fig = new Figure(this.size)));
+            fig.x = fig.width * x0;
+            fig.y = fig.height * y0;
             fig.id = arr[i];
             this.figures[y0][x0] = fig;
             fig.on("pointerup", this.mouseController);
@@ -110,18 +117,11 @@ export class Game extends Scene {
             Math.trunc((this.maxIndex + 1) / this.size)
         );
 
-        this.backGraphic.width = 105 * this.size + 5;
-        this.backGraphic.height = 105 * this.size + 5;
+        // this.backGraphic.width = 105 * this.size + 5;
+        // this.backGraphic.height = 105 * this.size + 5;
 
-        this.holder.x =
-            GameData.ASSETS_WIDTH / 2 - this.backGraphic.width / 2 + 5;
-        this.holder.y =
-            GameData.ASSETS_HEIGHT / 2 - this.backGraphic.height / 2 + 5;
-
-        // this.holder.x = 0;
-
-        this.backGraphic.position.x = this.holder.x - 5;
-        this.backGraphic.position.y = this.holder.y - 5;
+        this.holder.x = this.back.position.x + fig.offset;
+        this.holder.y = this.back.position.y + fig.offset;
 
         const style = new PIXI.TextStyle({
             fontFamily: "Arial",
@@ -188,7 +188,7 @@ export class Game extends Scene {
                 this.empty.y--;
                 break;
             case "Escape": // escape
-                this.newGame(this.randomInteger(2, 5));
+                this.newGame(this.randomInteger(3, 5));
                 return;
                 break;
             default:
